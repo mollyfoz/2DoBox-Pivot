@@ -10,35 +10,24 @@ var ideaArray = [];
 //*************************  EVENT LISTENERS  *************************
 //*********************************************************************
 
-$(document).on('input', function() {
-  enableSaveButton();
-  })
+$(document).on('input', enableSaveButton);
 
 // on page load, grab localStorage
-$(document).ready(function() {
-  getIdeasFromStorage();
-});
+// $(document).ready(getIdeasFromStorage)
+getIdeasFromStorage();
 
 // on save button click, build a new card
 $('.save-button').on('click', function() {
   buildNewCard(newIdea);
-  addToLocal(newIdea);
+  // addToLocal(newIdea);
   reset();
 });
 
 //Up-Vote Event
-$('.idea-container').on('click', '.up-vote', function() {
-  console.log('button works')
-  upvote();
-  addToLocal();
-});
+$('.idea-container').on('click', '.up-vote', upvote);
 
 //Down-Vote Event
-$('.idea-container').on('click', '.down-vote', function() {
-  console.log('this button works')
-  downvote();
-  addToLocal();
-});
+$('.idea-container').on('click', '.down-vote', downvote);
 
 //Delete idea cards from DOM and localStorage
 $('.idea-container').on('click', '.delete', function() {
@@ -60,7 +49,7 @@ $('.idea-container').on('click', '.delete', function() {
 //*********************************************************************
 
 //constructor function for creating new objects to save in localStorage
-function IdeaConstructor(title, body){
+function IdeaConstructor(title, body, id){
   this.id = Date.now();
   this.title = title;
   this.body = body;
@@ -71,11 +60,11 @@ function IdeaConstructor(title, body){
 function buildNewCard (title, body){
   var ideaTitle = $('.title-input').val() || title;
   var ideaBody = $('.body-input').val() || body;
-  var ideaID = Date.now();
+  // var ideaID = Date.now();
   var quality = "swill";
   var newIdea = new IdeaConstructor(ideaTitle, ideaBody);
   $('.idea-container').prepend(`
-      <article class="idea-card" id="${ideaID}">
+      <article class="idea-card" id="${newIdea.id}">
         <div class="card-top">
           <h2 id="to-do-title" contenteditable="true">${ideaTitle}</h2>
           <button class="delete icon"></button>
@@ -90,6 +79,7 @@ function buildNewCard (title, body){
       </article>
     `)
     ideaArray.push(newIdea);
+    addToLocal(newIdea);
   };
 
 //add object to localStorage function
@@ -106,7 +96,7 @@ function addToLocal(idea){
       var retrieve = JSON.parse(localStorage.getItem('ideaArray'));
           console.log("loading ideas ", retrieve)
       retrieve.forEach(function(element){
-      var ideaNode = buildNewCard(element.title, element.body);
+      var ideaNode = buildNewCard(element.title, element.body, element.id);
       ideaList.prepend(ideaNode);
       })
   } else {console.log('nothing here bitch')}
@@ -114,21 +104,65 @@ function addToLocal(idea){
 
 //upvote button function :: not functional
 function upvote() {
-  var qualityInput = $(this).closest().find('#vote';
+  var qualityInput = $(this).closest('.idea-card').find('#vote');
   console.log(qualityInput);
   if (qualityInput.text() === 'swill') {
-    $(this).siblings('p').children().text('plausible');
+    qualityInput.text('plausible');
   } else if (qualityInput.text() === 'plausible'){
     qualityInput.text('genius')
   }
+
+
+
+
+  var id = $('.up-vote').parents('.idea-card')[0].id;
+  console.log(id);
+  var parsedQuality = JSON.parse(localStorage.getItem('ideaArray'));
+  parsedQuality.forEach(function(element) {
+    if (id == element.id) {
+      console.log(element.id);
+  element.quality = qualityInput;
+  }
+  parsedQuality = element.quality;
+  console.log(parsedQuality);
+  })
+}
+console.log(parsedQuality);
+// ideaArray.push(parsedQuality);
+
+  // localStorage.setItem('ideaArray', JSON.stringify(ideaArray));
+
+  // storeQuality();
+
+
+function storeQuality () {
+  // var id = $('.up-vote').parents('.idea-card')[0].id;
+  var qualityInput = $('.up-vote').closest('.idea-card').find('#vote');
+  console.log(qualityInput);
+  var id = $('.up-vote').closest('.idea-card').prop('id');
+  console.log(id);
+  var parsedQuality = JSON.parse(localStorage.getItem('ideaArray'));
+  console.log(ideaArray.id);
+  if (id == parsedQuality.id) {
+  parsedQuality.forEach(function(element) {
+  element.quality = qualityInput;
+  console.log(element.quality);
+  parsedQuality = element.quality;
+  console.log(parsedQuality);
+  })
+}
+console.log(parsedQuality);
+// ideaArray.push(parsedQuality);
+
+  // localStorage.setItem('ideaArray', JSON.stringify(ideaArray));
 }
 
 //downvote button function :: not functional
-function downvote(){
-  var qualityInput = $(this).closest('.quality')
-  if (qualityInput.quality === 'genius'){
+function downvote() {
+  var qualityInput = $(this).closest('.idea-card').find('#vote')
+  if (qualityInput.text() === 'genius'){
     qualityInput.text('plausible')
-  }else if (qualityInput.text() === 'plausible'){
+  }else if (qualityInput.text() === 'plausible') {
     qualityInput.text('swill')
   }
 }
@@ -168,7 +202,7 @@ var ideaBody = $('.body-input').val();
   if (ideaTitle === "" || ideaBody === "") {
     $('.save-button').prop('disabled', true)
   } else {$('.save-button').prop('disabled', false)
-}
+  }
 }
 
 //reset input fields function
