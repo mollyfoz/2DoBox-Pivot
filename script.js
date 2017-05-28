@@ -5,7 +5,6 @@ var ideaBody = $('.body-input').val();
 var newIdea = {title: ideaTitle, body: ideaBody};
 var ideaList = $('.idea-container');
 var ideaArray = [];
-var counter = 0
 
 //*********************************************************************
 //*************************  EVENT LISTENERS  *************************
@@ -29,11 +28,14 @@ $('.save-button').on('click', function() {
 
 //Up-Vote Event
 $('.idea-container').on('click', '.up-vote', function() {
+  console.log('button works')
   upvote();
+  addToLocal();
 });
 
 //Down-Vote Event
 $('.idea-container').on('click', '.down-vote', function() {
+  console.log('this button works')
   downvote();
   addToLocal();
 });
@@ -70,18 +72,19 @@ function buildNewCard (title, body){
   var ideaTitle = $('.title-input').val() || title;
   var ideaBody = $('.body-input').val() || body;
   var ideaID = Date.now();
+  var quality = "swill";
   var newIdea = new IdeaConstructor(ideaTitle, ideaBody);
   $('.idea-container').prepend(`
-    <article class="idea-card" id="${ideaID}">
+      <article class="idea-card" id="${ideaID}">
         <div class="card-top">
-          <h2>${ideaTitle}</h2>
+          <h2 id="to-do-title" contenteditable="true">${ideaTitle}</h2>
           <button class="delete icon"></button>
         </div>
-        <p class="idea-text">${ideaBody}</p>
+        <p contenteditable="true" class="idea-text">${ideaBody}</p>
         <div class="card-bottom">
           <button class="up-vote"></button>
           <button class="down-vote icon"></button>
-          <p>quality: <span class="quality">swill</span></p>
+          <p>quality: <span id="vote">${quality}</span></p>
         </div>
         <hr>
       </article>
@@ -92,7 +95,7 @@ function buildNewCard (title, body){
 //add object to localStorage function
 function addToLocal(idea){
   var stringifiedIdea = JSON.stringify(ideaArray);
-  console.log(stringifiedIdea)
+  // console.log(stringifiedIdea)
   localStorage.setItem('ideaArray', stringifiedIdea);
 };
 
@@ -109,40 +112,54 @@ function addToLocal(idea){
   } else {console.log('nothing here bitch')}
 };
 
-//upvote button function
-function upvote(){
-  var qualityInput = $('.quality')
-  if (qualityInput.text() === 'swill'){
-    qualityInput.text('plausible');
-  }else if (qualityInput.text() === 'plausible'){
-    qualityInput.text('genius');
+//upvote button function :: not functional
+function upvote() {
+  var qualityInput = $(this).parent().find('#vote');
+  console.log(qualityInput);
+  if (qualityInput.text() === 'swill') {
+    $(this).siblings('p').children().text('plausible');
+  } else if (qualityInput.text() === 'plausible'){
+    qualityInput.text('genius')
   }
 }
 
-//downvote button function
+//downvote button function :: not functional
 function downvote(){
-  var qualityInput = $('.quality')
-  if (qualityInput.text() === 'genius'){
+  var qualityInput = $(this).closest('.quality')
+  if (qualityInput.quality === 'genius'){
     qualityInput.text('plausible')
   }else if (qualityInput.text() === 'plausible'){
     qualityInput.text('swill')
   }
 }
 
-//Search Bar Function
+$('.search-input').on('input', search)
+
 function search() {
-  var inputText = $('.search-input').val().toUpperCase();
-  var hideArray = ideaArray.filter(function(idea){
-    if (IdeaConstructor.title.toUpperCase().indexOf(inputText) < 0 && IdeaConstructo.body.toUpperCase().indexOf(inputText) < 0) {
-      return idea;
-    } else {
-      $('#' + idea.id).closest('.box').css('display', 'block');
-    }
-  });
-  hideArray.forEach(function(idea) {
-    $('#' + idea.id).closest('.box').css('display', 'none');
-  });
+  searchTitle();
+  searchBody();
 }
+//Search Bar Function
+function searchTitle() {
+  var inputText = $('.search-input').val();
+  console.log(inputText)
+  if (inputText) {
+    $('.idea-card').find("h2:not(:contains(" + inputText + "))").closest('.idea-card').slideUp();
+    $('.idea-card').find("h2:contains(" + inputText + ")").slideDown()
+} else {
+  $('.idea-card').slideDown();
+  }
+};
+
+function searchBody() {
+    var inputText = $('.search-input').val();
+    if (inputText) {
+    $('.idea-card').find(".idea-text:not(:contains(" + inputText + "))").closest('.idea-card').slideUp();
+    $('.idea-card').find(".idea-text:contains(" + inputText + ")").slideDown();
+  } else {
+    $('.idea-card').slideDown();
+  }
+};
 
 //enable the save button function
 function enableSaveButton()  {
@@ -161,6 +178,34 @@ function reset(){
   $('.save-button').prop('disabled', true);
 }
 
+//contenteditable :: does not work :: is buggy
+$('.idea-container').on('input', '#to-do-title', editTitle)
+
+function editTitle() {
+  var id = $(this).closest('.idea-card')[0].id;
+  var newTitle = $(this).text();
+  console.log(id)
+  ideaArray.forEach(function(card){
+    if (card.id == id) {
+      card.title = newTitle;
+    }
+  })
+  addToLocal();
+}
+
+$('.idea-container').on('input', '.idea-text', editBody)
+
+function editBody() {
+  var id = $(this).parents('.idea-card')[0].id;
+  var newBody = $(this).text();
+  console.log(id)
+  ideaArray.forEach(function(card){
+    if (card.id == id) {
+      card.body = newBody;
+    }
+  })
+  addToLocal();
+}
 //*********************************************************************
 //******************  The Graveyard of Failed Ideas *******************
 //*********************************************************************

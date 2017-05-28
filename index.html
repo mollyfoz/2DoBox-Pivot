@@ -3,41 +3,28 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="styles.css" type="text/css" rel="stylesheet">
-    <link href="normalize.css" type="text/css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="assets/css/normalize.css" type="text/css" rel="stylesheet">
+    <link href="assets/css/styles.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Slab:400,700" rel="stylesheet">
     <title>ideabox</title>
   </head>
+
   <body>
+
     <section class="header">
       <h1 class="title">idea<span class="box">box</span></h1>
-      <input class="title-input" placeholder=" Title" />
-      <input class="body-input" placeholder=" Body" />
-      <button class="save-button" disabled="true">save</button>
+      <input type="text" class="title-input" placeholder="Title"/>
+      <input type="text" class="body-input" placeholder="Body"/>
+      <button type="button" class="save-button" disabled="true">SAVE</button>
     </section>
-    <div class="search-bar">
-      <input class="search-input" placeholder=" Search">
-    </div>
-    <section class="idea-container">
 
-      <!-- <article class="idea-card">
-        <div class="card-top">
-          <h2>Example Idea 1</h2>
-          <img src="assets/delete.svg" class="delete icon">
-          <img src="assets/delete-hover.svg" class="delete-hover">
-        </div>
-        <p class="idea-text">I have no ideas because my brain is filled with coding stuff...</p>
-        <div class="card-bottom">
-          <img src="assets/upvote.svg" class="up-vote icon">
-          <img src="assets/upvote-hover.svg" class="up-vote-hover icon">
-          <img src="assets/downvote.svg" class="down-vote icon">
-          <img src="assets/downvote-hover.svg" class="down-vote-hover icon" class="down-vote-hover"
-          <p class="quality">quality: swill</p>
-        </div>
-        <hr>
-      </article> -->
+    <div class="search-bar">
+      <input type="text" class="search-input" placeholder="Search">
+    </div>
+
+    <section class="idea-container">
     </section>
+
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
        crossorigin="anonymous">
