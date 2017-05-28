@@ -60,7 +60,7 @@ $('.idea-container').on('click', '.delete', function() {
 //*********************************************************************
 
 //constructor function for creating new objects to save in localStorage
-function IdeaConstructor(title, body, quality){
+function IdeaConstructor(title, body){
   this.id = Date.now();
   this.title = title;
   this.body = body;
@@ -114,7 +114,7 @@ function addToLocal(idea){
 
 //upvote button function :: not functional
 function upvote() {
-  var qualityInput = $(this).parent().find('#vote');
+  var qualityInput = $(this).closest().find('#vote';
   console.log(qualityInput);
   if (qualityInput.text() === 'swill') {
     $(this).siblings('p').children().text('plausible');
