@@ -47,7 +47,7 @@ body {
   color: #6D6E71;
 }
 
-.save-button {
+.save-btn {
   background-color: #00A79D;
   border: none;
   color: #FFFFFF;
@@ -57,11 +57,11 @@ body {
   width: 60%;
 }
 
-.save-button:hover {
+.save-btn:hover {
   background-color: #045E55;
 }
 
-.save-button:disabled {
+.save-btn:disabled {
   background-color: #6D6E71;
 }
 
@@ -70,7 +70,7 @@ p {
   width: 90%;
 }
 
-.idea-text {
+.item-body {
   color: #939598;
   font-family: 'Open Sans', sans-serif;
   margin-top: 0px;
@@ -80,7 +80,7 @@ p {
   color: #6D6E71;
 }
 
-.idea-card {
+.list-item {
   border-bottom: 2px solid #D1D3D4;
   display: flex;
   flex-wrap: wrap;
@@ -88,7 +88,7 @@ p {
   width: 60%;
 }
 
-.card-top {
+.item-title {
   color: #6D6E71;
   display: flex;
   font-family: 'Roboto Slab', serif;
@@ -97,7 +97,7 @@ p {
   width: 100%;
 }
 
-.card-bottom {
+.item-worth {
   align-items: center;
   display: flex;
   width: 100%;
@@ -171,13 +171,13 @@ button {
 
   }
 
-  .save-button {
+  .save-btn {
     width: 80%;
     height: 10%
     margin-top: 10px;
   }
 
-  .idea-card {
+  .list-item {
     width: 80%
   }
 }
