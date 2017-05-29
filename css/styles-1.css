@@ -121,7 +121,7 @@ button {
 
 .delete {
   align-self: center;
-  background-image: url('/Users/jbecks/Turing/Mod1/Projects/2-do-box-1/assets/delete.svg');
+  background-image: url('../assets/delete.svg');
   background-repeat: no-repeat;
   border: none;
   right: 0px;
@@ -130,11 +130,11 @@ button {
 }
 
 .delete:hover {
-  background-image: url('/Users/jbecks/Turing/Mod1/Projects/2-do-box-1/assets/delete-hover.svg');
+  background-image: url('../assets/delete-hover.svg');
 }
 
 .up-vote {
-  background-image: url('/Users/jbecks/Turing/Mod1/Projects/2-do-box-1/assets/upvote.svg');
+  background-image: url('../assets/upvote.svg');
   background-repeat: no-repeat;
   border: none;
   height: 25px;
@@ -142,11 +142,11 @@ button {
 }
 
 .up-vote:hover {
-  background-image: url('/Users/jbecks/Turing/Mod1/Projects/2-do-box-1/assets/upvote-hover.svg');
+  background-image: url('../assets/upvote-hover.svg');
 }
 
 .down-vote {
-  background-image: url('/Users/jbecks/Turing/Mod1/Projects/2-do-box-1/assets/downvote.svg');
+  background-image: url('../assets/downvote.svg');
   background-repeat: no-repeat;
   border: none;
   margin: 0px 10px;
@@ -155,7 +155,7 @@ button {
 }
 
 .down-vote:hover {
-  background-image: url('/Users/jbecks/Turing/Mod1/Projects/2-do-box-1/assets/downvote-hover.svg');
+  background-image: url('../assets/downvote-hover.svg');
 }
 
 
