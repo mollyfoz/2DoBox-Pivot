@@ -127,7 +127,7 @@ function downvote() {
     if (qualityInput.text() === 'genius') {
       qualityInput.text('plausible');
     } else if (qualityInput.text() === 'plausible') {
-      qualityInput.text('swill')
+      qualityInput.text('swill');
     }
 };
 
