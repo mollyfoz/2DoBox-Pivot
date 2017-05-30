@@ -3,21 +3,37 @@ $(document).on('input', enableSaveButton);
 
 $(document).ready(getLocalItems);
 
-//constructor function for creating new objects to save in localStorage
+function getLocalItems() {
+  if (localStorage.getItem('listArray')) {
+    var retrieve = JSON.parse(localStorage.getItem('listArray'));
+    retrieve.forEach(function(element) {
+      buildNewCard(element.title, element.body, element.quality, element.id);
+    });
+  }
+};
+
+function enableSaveButton() {
+var listTitle = $('.title-input').val();
+var listBody = $('.body-input').val();
+  if (listTitle === "" || listBody === "") {
+    $('.save-btn').prop('disabled', true)
+  } else {$('.save-btn').prop('disabled', false)
+  }
+};
+
 function ItemConstructor(title, body, quality) {
   this.id = Date.now();
   this.title = title;
   this.body = body;
   this.quality = quality;
-}
+};
 
-//build a Card
 function buildNewCard (title, body, quality, id) {
   var listTitle = $('.title-input').val() || title;
   var listBody = $('.body-input').val() || body;
   var itemQuality = quality || "swill";
   prependNewCard(listTitle, listBody, itemQuality);
-}
+};
 
 function prependNewCard(listTitle, listBody, itemQuality) {
   var newItem = new ItemConstructor(listTitle, listBody, itemQuality);
@@ -40,19 +56,22 @@ function prependNewCard(listTitle, listBody, itemQuality) {
   addToLocal(newItem);
 };
 
-//add object to localStorage function
 function addToLocal(idea) {
   localStorage.setItem('listArray', JSON.stringify(listArray));
 };
 
-// get object back from JSON function
-function getLocalItems() {
-  if (localStorage.getItem('listArray')) {
-    var retrieve = JSON.parse(localStorage.getItem('listArray'));
-    retrieve.forEach(function(element) {
-      buildNewCard(element.title, element.body, element.quality, element.id);
-    });
-  }
+function saveCard() {
+  var listTitle = $('.title-input').val();
+  var listBody = $('.body-input').val();
+  var newItem = {title: listTitle, body: listBody};
+  buildNewCard(newItem);
+  reset();
+};
+
+function reset(){
+  $('.title-input').val('');
+  $('.body-input').val('');
+  $('.save-btn').prop('disabled', true);
 };
 
 function removeCard() {
@@ -67,29 +86,6 @@ function removeCard() {
   indivdualCard.remove();
 };
 
-function saveCard() {
-  var listTitle = $('.title-input').val();
-  var listBody = $('.body-input').val();
-  var newItem = {title: listTitle, body: listBody};
-  buildNewCard(newItem);
-  reset();
-};
-
-function enableSaveButton() {
-var listTitle = $('.title-input').val();
-var listBody = $('.body-input').val();
-  if (listTitle === "" || listBody === "") {
-    $('.save-btn').prop('disabled', true)
-  } else {$('.save-btn').prop('disabled', false)
-  }
-}
-
-function reset(){
-  $('.title-input').val('');
-  $('.body-input').val('');
-  $('.save-btn').prop('disabled', true);
-}
-
 function editTitle() {
   var id = $(event.target).closest('.list-item')[0].id;
   var newTitle = $(event.target).text();
@@ -99,7 +95,7 @@ function editTitle() {
     }
   })
   addToLocal();
-}
+};
 
 function editBody() {
   var id = $(this).parents('.list-item')[0].id;
@@ -110,7 +106,7 @@ function editBody() {
     }
   })
   addToLocal();
-}
+};
 
 function upvote() {
   var qualityInput = $(event.target).closest('.list-item').find('#vote');
@@ -119,12 +115,26 @@ function upvote() {
     } else if (qualityInput.text() === 'plausible') {
       qualityInput.text('genius')
     }
-}
+};
 
 function upvoteStorage() {
   upvote();
   updateLocalQuality();
-}
+};
+
+function downvote() {
+  var qualityInput = $(event.target).closest('.list-item').find('#vote');
+    if (qualityInput.text() === 'genius') {
+      qualityInput.text('plausible');
+    } else if (qualityInput.text() === 'plausible') {
+      qualityInput.text('swill');
+    }
+};
+
+function downvoteStorage() {
+  downvote();
+  updateLocalQuality();
+};
 
 function updateLocalQuality() {
   var qualityInput = $(event.target).closest('.list-item').find('#vote');
@@ -137,21 +147,7 @@ function updateLocalQuality() {
     });
   listArray = parsedQuality;
   addToLocal();
-}
-
-function downvoteStorage() {
-  downvote();
-  updateLocalQuality();
-}
-//downvote button
-function downvote() {
-  var qualityInput = $(event.target).closest('.list-item').find('#vote');
-    if (qualityInput.text() === 'genius') {
-      qualityInput.text('plausible');
-    } else if (qualityInput.text() === 'plausible') {
-      qualityInput.text('swill')
-    }
-}
+};
 
 function prependExistingCard(filtered) {
   $('.list-ctnr').prepend(`
@@ -169,7 +165,7 @@ function prependExistingCard(filtered) {
         <hr>
       </article>
     `)
-}
+};
 
 function searchItems() {
   var searchResult = $(this).val().toUpperCase();
@@ -180,7 +176,7 @@ function searchItems() {
   results.forEach(function(result) {
   prependExistingCard(result);
  })
-}
+};
 
 $('.save-btn').on('click', saveCard);
 
