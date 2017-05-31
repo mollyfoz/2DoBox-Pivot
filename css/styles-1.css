@@ -85,6 +85,7 @@ p {
   display: flex;
   flex-wrap: wrap;
   margin: 15px auto;
+  padding: 5px;
   width: 60%;
 }
 
@@ -117,6 +118,10 @@ p {
 button {
   border: none;
   background-color: transparent;
+}
+
+button:focus {
+  outline: 0;
 }
 
 .delete {
@@ -156,6 +161,33 @@ button {
 
 .down-vote:hover {
   background-image: url('../assets/downvote-hover.svg');
+}
+
+.complete-task {
+  background-color: #6D6E71;
+  border: 1px solid #ddd;
+  border-radius: 100px;
+  color: #fff;
+  font-weight: lighter;
+  padding: 5px;
+  width: 150px;
+}
+
+.complete-task:hover {
+  background-color: #045E55;
+  color: #fff;
+}
+
+.item-complete {
+  background-color: #eaebed;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.btn-color {
+  background-color: #045E55;
 }
 
 
