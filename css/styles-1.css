@@ -32,10 +32,6 @@ body {
   width: 60%;
 }
 
-.search-input {
-  height: 35px;
-}
-
 .title {
   color: #00A79D;
   font-size: 45px;
@@ -57,12 +53,45 @@ body {
   width: 60%;
 }
 
+.filter-btn:hover,
+.completed:hover,
 .save-btn:hover {
   background-color: #045E55;
 }
 
 .save-btn:disabled {
   background-color: #6D6E71;
+}
+
+.completed {
+  background-color: #00A79D;
+  color: #fff;
+  height: 35px;
+  margin: 10px;
+  width: 18%;
+}
+
+h3 {
+  margin: 40px 0 0 10px;
+  text-align: center;
+}
+
+.search-input {
+  height: 35px;
+}
+
+.search-btns {
+  display: flex;
+  justify-content: center;
+}
+
+.filter-btn {
+  background-color: #00A79D;
+  color: #fff;
+  display: inline-block;
+  margin: 20px 5px;;
+  height: 30px;
+  width: 10%;
 }
 
 p {
@@ -180,21 +209,26 @@ button:focus {
 
 .item-complete {
   background-color: #eaebed;
-}
-
-.strikethrough {
   text-decoration: line-through;
 }
-
-.btn-color {
-  background-color: #045E55;
-}
-
 
 
 /*******************************
          media query @ 450px
 *******************************/
+
+@media (max-width: 853px) {
+
+  .stack-btns {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .completed {
+    width: 60%;
+  }
+}
 
 @media (max-width: 450px) {
 
@@ -202,12 +236,13 @@ button:focus {
     width: 80%;
 
   }
-
+  .completed,
   .save-btn {
     width: 80%;
     height: 10%
     margin-top: 10px;
   }
+
 
   .list-item {
     width: 80%

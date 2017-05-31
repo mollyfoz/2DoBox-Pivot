@@ -16,11 +16,24 @@
       <input type="text" class="input title-input" placeholder="Title"/>
       <input type="text" class="input body-input" placeholder="Task"/>
       <button type="button" class="save-btn" disabled="true">SAVE</button>
+      <div class="stack-btns">
+        <button type="button" id="hide" class="completed">Hide Completed</button>
+        <button type="button" id="show" class="completed">Show Completed</button>
+        <button type="button" id="remove" class="completed">Remove Completed</button>
+      </div>
     </section>
 
     <div role="search-field" class="search-bar">
       <input type="text" class="input search-input" placeholder="Filter">
     </div>
+    <h3>Search by Importance</h3>
+      <div class="search-btns">
+        <button id="critical" class="filter-btn">Critical</button>
+        <button id="high" class="filter-btn">High</button>
+        <button id="normal" class="filter-btn">Normal</button>
+        <button id="low" class="filter-btn">Low</button>
+        <button id="none" class="filter-btn">None</button>
+      </div>
 
     <section class="list-ctnr">
     </section>

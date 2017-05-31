@@ -3,11 +3,13 @@ $(document).on('input', enableSaveButton);
 
 $(document).ready(getLocalItems);
 
+$(document).ready(hideCompleted);
+
 function getLocalItems() {
   if (localStorage.getItem('listArray')) {
     var retrieve = JSON.parse(localStorage.getItem('listArray'));
     retrieve.forEach(function(element) {
-      buildNewCard(element.title, element.body, element.quality, element.id, element.completeBtn, element.completeTextStyle, element.completeBckgndColor);
+      buildNewCard(element.title, element.body, element.quality, element.id, element.completeBckgndColor);
     });
   }
 };
@@ -21,41 +23,37 @@ var listBody = $('.body-input').val();
   }
 };
 
-function ItemConstructor(title, body, quality, completeBtn, completeTextStyle, completeBckgndColor) {
+function ItemConstructor(title, body, quality, completeBckgndColor) {
   this.id = Date.now();
   this.title = title;
   this.body = body;
   this.quality = quality;
-  this.completeBtn = completeBtn;
-  this.completeTextStyle = completeTextStyle;
   this.completeBckgndColor = completeBckgndColor;
 
 };
 
-function buildNewCard (title, body, quality, id, completeBtn, completeTextStyle, completeBckgndColor) {
+function buildNewCard (title, body, quality, id, completeBckgndColor) {
   var listTitle = $('.title-input').val() || title;
   var listBody = $('.body-input').val() || body;
   var itemQuality = quality || "Normal";
-  var itemCompleteBtn = completeBtn || "";
-  var itemTextStyle = completeTextStyle || "";
   var itemCmpltColor = completeBckgndColor || "";
-  prependNewCard(listTitle, listBody, itemQuality, itemCompleteBtn, completeTextStyle, completeBckgndColor);
+  prependNewCard(listTitle, listBody, itemQuality, completeBckgndColor);
 };
 
-function prependNewCard(listTitle, listBody, itemQuality, itemCompleteBtn, completeTextStyle, completeBckgndColor) {
-  var newItem = new ItemConstructor(listTitle, listBody, itemQuality, itemCompleteBtn, completeTextStyle, completeBckgndColor);
+function prependNewCard(listTitle, listBody, itemQuality, completeBckgndColor) {
+  var newItem = new ItemConstructor(listTitle, listBody, itemQuality, completeBckgndColor);
   $('.list-ctnr').prepend(`
     <article class="list-item ${newItem.completeBckgndColor}" id="${newItem.id}">
       <div aria-label="item-title" class="item-title">
-        <h2 id="to-do-title" class="${newItem.completeTextStyle}" contenteditable="true">${newItem.title}</h2>
+        <h2 id="to-do-title" contenteditable="true">${newItem.title}</h2>
         <button class="delete icon"></button>
       </div>
-      <p contenteditable="true" class="item-body ${newItem.completeTextStyle}">${newItem.body}</p>
+      <p contenteditable="true" class="item-body">${newItem.body}</p>
       <div class="item-worth">
         <button class="up-vote"></button>
         <button class="down-vote icon"></button>
         <p>quality: <span id="vote">${newItem.quality}</span></p>
-        <button class="complete-task ${newItem.completeBtn}">Complete Me</button>
+        <button class="complete-task">Complete Me</button>
       </div>
       <hr>
     </article>
@@ -116,34 +114,6 @@ function editBody() {
   addToLocal();
 };
 
-function upvote() {
-  var qualityInput = $(event.target).closest('.list-item').find('#vote');
-    if (qualityInput.text() === 'swill') {
-      qualityInput.text('plausible');
-    } else if (qualityInput.text() === 'plausible') {
-      qualityInput.text('genius')
-    }
-};
-
-function upvoteStorage() {
-  upvote();
-  updateLocalQuality();
-};
-
-function downvote() {
-  var qualityInput = $(event.target).closest('.list-item').find('#vote');
-    if (qualityInput.text() === 'genius') {
-      qualityInput.text('plausible');
-    } else if (qualityInput.text() === 'plausible') {
-      qualityInput.text('swill');
-    }
-};
-
-function downvoteStorage() {
-  downvote();
-  updateLocalQuality();
-};
-
 function updateLocalQuality() {
   var qualityInput = $(event.target).closest('.list-item').find('#vote');
   var thisId = $(event.target).parent().parent().prop('id');
@@ -157,10 +127,44 @@ function updateLocalQuality() {
   addToLocal();
 };
 
+function upvote() {
+  var qualityInput = $(event.target).closest('.list-item').find('#vote');
+    if (qualityInput.text() === 'None') {
+      qualityInput.text('Low');
+    } else if (qualityInput.text() === 'Low') {
+      qualityInput.text('Normal');
+    } else if (qualityInput.text() === 'Normal') {
+      qualityInput.text('High');
+    } else if (qualityInput.text() === 'High') {
+      qualityInput.text('Critical');
+    }
+};
+
+function upvoteStorage() {
+  upvote();
+  updateLocalQuality();
+};
+
+function downvote() {
+  var qualityInput = $(event.target).closest('.list-item').find('#vote');
+  if (qualityInput.text() === 'Critical') {
+    qualityInput.text('High');
+  } else if (qualityInput.text() === 'High') {
+    qualityInput.text('Normal');
+  } else if (qualityInput.text() === 'Normal') {
+    qualityInput.text('Low');
+  } else if (qualityInput.text() === 'Low') {
+    qualityInput.text('None');
+  }
+};
+
+function downvoteStorage() {
+  downvote();
+  updateLocalQuality();
+};
+
 function completedTask() {
   cardComplete();
-  completedText();
-  btnColor();
 }
 
 function cardComplete() {
@@ -168,63 +172,65 @@ function cardComplete() {
   var thisId = $(event.target).parent().parent().prop('id');
   var parsedArray = JSON.parse(localStorage.getItem('listArray'));
     parsedArray.forEach(function(element) {
-      if (thisId == element.id) console.log(element.completeBckgndColor);{
+      if (thisId == element.id) {
         if (element.completeBckgndColor !== '') {
-          element.completeBckgndColor = '';
-        } else {
           element.completeBckgndColor = 'item-complete';
+        } else {
+          element.completeBckgndColor = '';
         }
       }
     });
   listArray = parsedArray;
   addToLocal();
+  console.log(localStorage);
 }
 
-
-function completedText() {
-  $(event.target).closest('.list-item').find('#to-do-title, .item-body').toggleClass('strikethrough');
-  var thisId = $(event.target).parent().parent().prop('id');
-  var parsedArray = JSON.parse(localStorage.getItem('listArray'));
-    parsedArray.forEach(function(element) {
-      if (thisId == element.id) {
-      element.completeTextStyle
-      }
-    });
-  listArray = parsedArray;
-  addToLocal();
+function hideCompleted() {
+  $('.item-complete').hide();
 }
 
-function btnColor(){
-  $(event.target).closest('.list-item').find('.complete-task').toggleClass('btn-color');
-  var thisId = $(event.target).parent().parent().prop('id');
-  var parsedArray = JSON.parse(localStorage.getItem('listArray'));
-    parsedArray.forEach(function(element) {
-      if (thisId == element.id) {
-      element.completeBtn
-      }
-    });
-  listArray = parsedArray;
-  addToLocal();
-  console.log(localStorage)
-};
+function showCompleted() {
+  $('.item-complete').show();
+}
+//============would be nice but not neccessary==============
+// function removeCompleted() {
+//   console.log(localStorage);
+//   // var cardId = parseInt($(this).closest('.list-item').attr('id'));
+//   listArray.forEach(function(item, index) {
+//     if (item.completeBckgndColor === 'item-complete') {
+//       listArray.splice(index, 1);
+//     }
+//     addToLocal();
+//     console.log(localStorage);
+//   });
+// };
 
-
-
-
+//=======not working yet====
+function showCritical() {
+  var notCrit = $('.list-item').find('#vote').text(!'Critical');
+  console.log(notCrit);
+  notCrit.hide();
+  // var importance = $('#vote');
+  // console.log(importance.text());
+  // var card = $('.list-item');
+  // if (importance.text() === 'Critical'){
+  //   card.show();
+  // } card.hide();
+}
 
 function prependExistingCard(filtered) {
   $('.list-ctnr').prepend(`
       <article class="list-item ${filtered.completeBckgndColor}" id="${filtered.id}">
         <div aria-label="item-title" class="item-title">
-          <h2 id="to-do-title" class="${filtered.completeTextStyle}" contenteditable="true">${filtered.title}</h2>
+          <h2 id="to-do-title" contenteditable="true">${filtered.title}</h2>
           <button class="delete icon"></button>
         </div>
-        <p contenteditable="true" class="item-body ${filtered.completeTextStyle}">${filtered.body}</p>
+        <p contenteditable="true" class="item-body">${filtered.body}</p>
         <div class="item-worth">
           <button class="up-vote"></button>
           <button class="down-vote icon"></button>
           <p>quality: <span id="vote">${filtered.quality}</span></p>
-          <button class="complete-task ${filtered.completeBtn}">Complete Me</button>
+          <button class="complete-task">Complete Me</button>
         </div>
         <hr>
       </article>
@@ -257,3 +263,18 @@ $('.list-ctnr').on('click', '.down-vote', downvoteStorage);
 $('.list-ctnr').on('click', '.delete', removeCard);
 
 $('.list-ctnr').on('click', '.complete-task', completedTask);
+
+$('#hide').on('click', hideCompleted);
+
+$('#show').on('click', showCompleted);
+
+$('#critical').on('click', showCritical);
+
+$('#high').on('click', );
+
+$('#normal').on('click', );
+
+$('#low').on('click', );
+
+$('#none').on('click', );
+// $('#remove').on('click', removeCompleted);
