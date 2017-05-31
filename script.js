@@ -5,11 +5,13 @@ $(document).ready(getLocalItems);
 
 $(document).ready(hideCompleted);
 
+$(document).ready(hideTenPlus);
+
 function getLocalItems() {
   if (localStorage.getItem('listArray')) {
     var retrieve = JSON.parse(localStorage.getItem('listArray'));
     retrieve.forEach(function(element) {
-      buildNewCard(element.title, element.body, element.quality, element.id, element.completeBckgndColor);
+      buildNewCard(element.title, element.body, element.quality, element.id, element.completedTask);
     });
   }
 };
@@ -23,27 +25,27 @@ var listBody = $('.body-input').val();
   }
 };
 
-function ItemConstructor(title, body, quality, completeBckgndColor) {
+function ItemConstructor(title, body, quality, completedTask) {
   this.id = Date.now();
   this.title = title;
   this.body = body;
   this.quality = quality;
-  this.completeBckgndColor = completeBckgndColor;
+  this.completedTask = completedTask;
 
 };
 
-function buildNewCard (title, body, quality, id, completeBckgndColor) {
+function buildNewCard (title, body, quality, id, completedTask) {
   var listTitle = $('.title-input').val() || title;
   var listBody = $('.body-input').val() || body;
   var itemQuality = quality || "Normal";
-  var itemCmpltColor = completeBckgndColor || "";
-  prependNewCard(listTitle, listBody, itemQuality, completeBckgndColor);
+  var itemCompletedTask = completedTask || "";
+  prependNewCard(listTitle, listBody, itemQuality, itemCompletedTask);
 };
 
-function prependNewCard(listTitle, listBody, itemQuality, completeBckgndColor) {
-  var newItem = new ItemConstructor(listTitle, listBody, itemQuality, completeBckgndColor);
+function prependNewCard(listTitle, listBody, itemQuality, itemCompletedTask) {
+  var newItem = new ItemConstructor(listTitle, listBody, itemQuality, itemCompletedTask);
   $('.list-ctnr').prepend(`
-    <article class="list-item ${newItem.completeBckgndColor}" id="${newItem.id}">
+    <article class="list-item ${newItem.completedTask}" id="${newItem.id}">
       <div aria-label="item-title" class="item-title">
         <h2 id="to-do-title" contenteditable="true">${newItem.title}</h2>
         <button class="delete icon"></button>
@@ -53,8 +55,8 @@ function prependNewCard(listTitle, listBody, itemQuality, completeBckgndColor) {
         <button class="up-vote"></button>
         <button class="down-vote icon"></button>
         <p>quality: <span id="vote">${newItem.quality}</span></p>
-        <button class="complete-task">Complete Me</button>
       </div>
+        <button class="complete-task">Completed Task</button>
       <hr>
     </article>
     `)
@@ -72,6 +74,7 @@ function saveCard() {
   var newItem = {title: listTitle, body: listBody};
   buildNewCard(newItem);
   reset();
+  hideTenPlus();
 };
 
 function reset(){
@@ -88,8 +91,7 @@ function removeCard() {
     }
     addToLocal();
   });
-  var indivdualCard = document.getElementById(cardId);
-  indivdualCard.remove();
+  $(this).closest('.list-item').remove();
 };
 
 function editTitle() {
@@ -129,16 +131,12 @@ function updateLocalQuality() {
 
 function upvote() {
   var qualityInput = $(event.target).closest('.list-item').find('#vote');
-    if (qualityInput.text() === 'None') {
-      qualityInput.text('Low');
-    } else if (qualityInput.text() === 'Low') {
-      qualityInput.text('Normal');
-    } else if (qualityInput.text() === 'Normal') {
-      qualityInput.text('High');
-    } else if (qualityInput.text() === 'High') {
-      qualityInput.text('Critical');
-    }
-};
+  var qualityArray = ['None', 'Low', 'Normal', 'High', 'Critical']
+  var currentIndex = qualityArray.indexOf(qualityInput.text())
+  var newQuality = qualityArray[currentIndex + 1];
+  console.log(newQuality);
+  qualityInput.text(newQuality);
+}
 
 function upvoteStorage() {
   upvote();
@@ -147,15 +145,10 @@ function upvoteStorage() {
 
 function downvote() {
   var qualityInput = $(event.target).closest('.list-item').find('#vote');
-  if (qualityInput.text() === 'Critical') {
-    qualityInput.text('High');
-  } else if (qualityInput.text() === 'High') {
-    qualityInput.text('Normal');
-  } else if (qualityInput.text() === 'Normal') {
-    qualityInput.text('Low');
-  } else if (qualityInput.text() === 'Low') {
-    qualityInput.text('None');
-  }
+  var qualityArray = ['None', 'Low', 'Normal', 'High', 'Critical']
+  var currentIndex = qualityArray.indexOf(qualityInput.text())
+  var newQuality = qualityArray[currentIndex - 1];
+  qualityInput.text(newQuality);
 };
 
 function downvoteStorage() {
@@ -163,24 +156,28 @@ function downvoteStorage() {
   updateLocalQuality();
 };
 
-function completedTask() {
+function makeTaskComplete() {
   cardComplete();
+}
+
+function updateTaskStatus() {
+  var thisId = $(event.target).closest('.list-item').prop('id');
+  var parsedArray = JSON.parse(localStorage.getItem('listArray'));
+  parsedArray.forEach(function(element) {
+    if (thisId == element.id) {
+      if (element.completedTask !== '') {
+        element.completedTask = '';
+      } else {
+        element.completedTask = 'item-complete';
+      }
+    }
+    listArray = parsedArray;
+  })
 }
 
 function cardComplete() {
   $(event.target).closest('.list-item').toggleClass('item-complete');
-  var thisId = $(event.target).parent().parent().prop('id');
-  var parsedArray = JSON.parse(localStorage.getItem('listArray'));
-    parsedArray.forEach(function(element) {
-      if (thisId == element.id) {
-        if (element.completeBckgndColor !== '') {
-          element.completeBckgndColor = 'item-complete';
-        } else {
-          element.completeBckgndColor = '';
-        }
-      }
-    });
-  listArray = parsedArray;
+  updateTaskStatus();
   addToLocal();
   console.log(localStorage);
 }
@@ -193,34 +190,75 @@ function showCompleted() {
   $('.item-complete').show();
 }
 //============would be nice but not neccessary==============
-// function removeCompleted() {
-//   console.log(localStorage);
-//   // var cardId = parseInt($(this).closest('.list-item').attr('id'));
-//   listArray.forEach(function(item, index) {
-//     if (item.completeBckgndColor === 'item-complete') {
-//       listArray.splice(index, 1);
-//     }
-//     addToLocal();
-//     console.log(localStorage);
-//   });
-// };
+function removeCompleted() {
+console.log(this);
+  $(this).closest('.test').find('.item-complete').remove();
+  addToLocal();
+  listArray.forEach(function(item, index) {
+    if (item.completedTask === 'item-complete') {
+      listArray.splice(index, 1);
+    }
+    // addToLocal();
+  });
+  $(this).closest('.list-item').remove();
+};
 
-//=======not working yet====
+
+
+function filterBtns(btnQuality) {
+  $('.list-ctnr').empty();
+  btnQuality.forEach(function(result) {
+    prependExistingCard(result);
+  })
+};
+
 function showCritical() {
-  var notCrit = $('.list-item').find('#vote').text(!'Critical');
-  console.log(notCrit);
-  notCrit.hide();
-  // var importance = $('#vote');
-  // console.log(importance.text());
-  // var card = $('.list-item');
-  // if (importance.text() === 'Critical'){
-  //   card.show();
-  // } card.hide();
+  var btnResults = listArray.filter(function(list) {
+   return list.quality.includes('Critical');
+  })
+  filterBtns(btnResults)
+};
+
+function showHigh() {
+  var btnResults = listArray.filter(function(list) {
+   return list.quality.includes('High');
+  })
+  filterBtns(btnResults)
+};
+
+function showNormal() {
+  var btnResults = listArray.filter(function(list) {
+   return list.quality.includes('Normal');
+  })
+  filterBtns(btnResults)
+};
+
+function showLow() {
+  var btnResults = listArray.filter(function(list) {
+   return list.quality.includes('Low');
+  })
+  filterBtns(btnResults)
+};
+
+function showNone() {
+  var btnResults = listArray.filter(function(list) {
+   return list.quality.includes('None');
+  })
+  filterBtns(btnResults)
+};
+
+function showAll() {
+  var btnResults = listArray;
+  filterBtns(btnResults);
+  }
+
+function hideTenPlus() {
+  $('.list-item').slice(10).hide();
 }
 
 function prependExistingCard(filtered) {
   $('.list-ctnr').prepend(`
-      <article class="list-item ${filtered.completeBckgndColor}" id="${filtered.id}">
+      <article class="list-item ${filtered.completedTask}" id="${filtered.id}">
         <div aria-label="item-title" class="item-title">
           <h2 id="to-do-title" contenteditable="true">${filtered.title}</h2>
           <button class="delete icon"></button>
@@ -230,8 +268,8 @@ function prependExistingCard(filtered) {
           <button class="up-vote"></button>
           <button class="down-vote icon"></button>
           <p>quality: <span id="vote">${filtered.quality}</span></p>
-          <button class="complete-task">Complete Me</button>
         </div>
+          <button class="complete-task">Completed Task</button>
         <hr>
       </article>
     `)
@@ -262,7 +300,7 @@ $('.list-ctnr').on('click', '.down-vote', downvoteStorage);
 
 $('.list-ctnr').on('click', '.delete', removeCard);
 
-$('.list-ctnr').on('click', '.complete-task', completedTask);
+$('.list-ctnr').on('click', '.complete-task', makeTaskComplete);
 
 $('#hide').on('click', hideCompleted);
 
@@ -270,11 +308,14 @@ $('#show').on('click', showCompleted);
 
 $('#critical').on('click', showCritical);
 
-$('#high').on('click', );
+$('#high').on('click', showHigh);
 
-$('#normal').on('click', );
+$('#normal').on('click', showNormal);
 
-$('#low').on('click', );
+$('#low').on('click', showLow);
 
-$('#none').on('click', );
-// $('#remove').on('click', removeCompleted);
+$('#none').on('click', showNone);
+
+$('#all').on('click', showAll);
+
+$('#remove').on('click', removeCompleted);
