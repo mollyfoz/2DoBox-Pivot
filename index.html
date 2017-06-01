@@ -9,17 +9,16 @@
     <title>2DoBox</title>
   </head>
 
-  <body class="test">
+  <body>
 
     <section class="header">
       <h1 class="title">2Do<span class="box">Box</span></h1>
       <input type="text" class="input title-input" placeholder="Title"/>
       <input type="text" class="input body-input" placeholder="Task"/>
-      <button type="button" class="save-btn" disabled="true">SAVE</button>
+      <button type="button" class="save-btn" disabled>SAVE</button>
       <div class="stack-btns">
         <button type="button" id="hide" class="completed">Hide Completed</button>
         <button type="button" id="show" class="completed">Show Completed</button>
-        <button type="button" id="remove" class="completed">Remove Completed</button>
       </div>
     </section>
 
@@ -33,7 +32,7 @@
         <button id="normal" class="filter-btn">Normal</button>
         <button id="low" class="filter-btn">Low</button>
         <button id="none" class="filter-btn">None</button>
-        <button id="all" class="filter-btn">Show All</button>
+        <button id="all" class="filter-btn show-more-btn">Show More ToDos</button>
       </div>
 
     <section class="list-ctnr">
