@@ -1,4 +1,5 @@
-var listArray = []
+var listArray = [];
+
 $(document).on('input', enableSaveButton);
 
 $(document).ready(getLocalItems);
@@ -19,9 +20,8 @@ function getLocalItems() {
 function enableSaveButton() {
 var listTitle = $('.title-input').val();
 var listBody = $('.body-input').val();
-  if (listTitle === "" || listBody === "") {
-    $('.save-btn').prop('disabled', true)
-  } else {$('.save-btn').prop('disabled', false)
+  if (listTitle !== "" && listBody !== "") {
+    $('.save-btn').prop('disabled', false)
   }
 };
 
@@ -31,7 +31,6 @@ function ItemConstructor(title, body, quality, completedTask) {
   this.body = body;
   this.quality = quality;
   this.completedTask = completedTask;
-
 };
 
 function buildNewCard (title, body, quality, id, completedTask) {
@@ -84,7 +83,7 @@ function reset(){
 };
 
 function removeCard() {
-  var cardId = parseInt($(this).closest('.list-item').attr('id'));
+  var cardId = parseInt($(this).closest('.list-item').prop('id'));
   listArray.forEach(function(item, index) {
     if (item.id === cardId) {
       listArray.splice(index, 1);
@@ -101,7 +100,7 @@ function editTitle() {
     if (card.id == id) {
       card.title = newTitle;
     }
-  })
+  });
   addToLocal();
 };
 
@@ -112,7 +111,7 @@ function editBody() {
     if (card.id == id) {
       card.body = newBody;
     }
-  })
+  });
   addToLocal();
 };
 
@@ -134,7 +133,6 @@ function upvote() {
   var qualityArray = ['None', 'Low', 'Normal', 'High', 'Critical']
   var currentIndex = qualityArray.indexOf(qualityInput.text())
   var newQuality = qualityArray[currentIndex + 1];
-  console.log(newQuality);
   qualityInput.text(newQuality);
 }
 
@@ -158,103 +156,91 @@ function downvoteStorage() {
 
 function makeTaskComplete() {
   cardComplete();
-}
+};
 
 function updateTaskStatus() {
   var thisId = $(event.target).closest('.list-item').prop('id');
   var parsedArray = JSON.parse(localStorage.getItem('listArray'));
   parsedArray.forEach(function(element) {
     if (thisId == element.id) {
-      if (element.completedTask !== '') {
+      return check(element);
+    }
+});
+
+function check(element) {
+  if (element.completedTask !== '') {
         element.completedTask = '';
       } else {
         element.completedTask = 'item-complete';
       }
+      listArray = parsedArray;
     }
-    listArray = parsedArray;
-  })
-}
+};
 
 function cardComplete() {
   $(event.target).closest('.list-item').toggleClass('item-complete');
   updateTaskStatus();
   addToLocal();
-  console.log(localStorage);
-}
+};
 
 function hideCompleted() {
   $('.item-complete').hide();
-}
+};
 
 function showCompleted() {
   $('.item-complete').show();
-}
-//============would be nice but not neccessary==============
-function removeCompleted() {
-console.log(this);
-  $(this).closest('.test').find('.item-complete').remove();
-  addToLocal();
-  listArray.forEach(function(item, index) {
-    if (item.completedTask === 'item-complete') {
-      listArray.splice(index, 1);
-    }
-    // addToLocal();
-  });
-  $(this).closest('.list-item').remove();
 };
-
-
 
 function filterBtns(btnQuality) {
   $('.list-ctnr').empty();
   btnQuality.forEach(function(result) {
     prependExistingCard(result);
-  })
+  });
 };
 
 function showCritical() {
   var btnResults = listArray.filter(function(list) {
    return list.quality.includes('Critical');
-  })
+ });
   filterBtns(btnResults)
 };
 
 function showHigh() {
   var btnResults = listArray.filter(function(list) {
    return list.quality.includes('High');
-  })
+  });
   filterBtns(btnResults)
 };
 
 function showNormal() {
   var btnResults = listArray.filter(function(list) {
    return list.quality.includes('Normal');
-  })
+  });
   filterBtns(btnResults)
 };
 
 function showLow() {
   var btnResults = listArray.filter(function(list) {
    return list.quality.includes('Low');
-  })
+  });
   filterBtns(btnResults)
 };
 
 function showNone() {
   var btnResults = listArray.filter(function(list) {
    return list.quality.includes('None');
-  })
+  });
   filterBtns(btnResults)
 };
 
 function showAll() {
   var btnResults = listArray;
   filterBtns(btnResults);
-  }
+};
 
 function hideTenPlus() {
   $('.list-item').slice(10).hide();
-}
+};
 
 function prependExistingCard(filtered) {
   $('.list-ctnr').prepend(`
@@ -279,11 +265,11 @@ function searchItems() {
   var searchResult = $(this).val().toUpperCase();
   var results = listArray.filter(function(list) {
    return list.title.toUpperCase().includes(searchResult) || list.body.toUpperCase().includes(searchResult)
-  })
+  });
   $('.list-ctnr').empty();
   results.forEach(function(result) {
   prependExistingCard(result);
- })
+  });
 };
 
 $('.save-btn').on('click', saveCard);
@@ -317,5 +303,3 @@ $('#low').on('click', showLow);
 $('#none').on('click', showNone);
 
 $('#all').on('click', showAll);
-
-$('#remove').on('click', removeCompleted);
