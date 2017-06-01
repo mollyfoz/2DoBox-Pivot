@@ -177,6 +177,10 @@ function check(element) {
     }
 };
 
+function cardPrepend() {
+  $(event.target).closest('.list-item').toggleClass('item-complete');
+}
+
 function cardComplete() {
   $(event.target).closest('.list-item').toggleClass('item-complete');
   updateTaskStatus();
@@ -189,7 +193,33 @@ function hideCompleted() {
 
 function showCompleted() {
   $('.item-complete').show();
+  // completedToTop();
 };
+
+//add completed cards to top of the list when shown
+// function completedToTop() {
+//     var cardId = parseInt($(event.target).closest('.list-item').find('.item-complete').prop('id'));
+//     var completedArray = []
+//     listArray.forEach(function(completed, index) {
+//       if (item.id === cardId) {
+//         listArray.splice(index, 1);
+//         return listArray;
+//       }
+//       // addToLocal();
+//     });
+// 
+//   }
+//       completedArray.push(completed);
+//       console.log(completedArray)
+//     }
+//     var anotherArray = completedArray.concat(listArray);
+//     console.log(anotherArray);
+//     anotherArray.forEach(function(value) {
+//       buildNewCard(value);
+//     })
+//     addToLocal();
+//   }
+
 
 function filterBtns(btnQuality) {
   $('.list-ctnr').empty();
